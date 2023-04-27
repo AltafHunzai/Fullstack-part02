@@ -6,6 +6,8 @@ const App = ({ notes }) => {
   const [note, setNote] = useState([])
   const [newNote, setNewNote] = useState('a new note')
   const [showAll, setShowAll] = useState(true)
+  const [persons, setPersons] = useState([])
+  const [newName, setNewName] = useState('add a new person')
 
   const course = [
     {
@@ -71,6 +73,21 @@ const App = ({ notes }) => {
     setNewNote(event.target.value)
   }
 
+  const addPerson = (event) => {
+    event.preventDefault()
+    const personObject = {
+      name: newName,
+      id: persons.length + 1,
+    }
+    setPersons(persons.concat(personObject))
+    setNewName(event.target.value)
+  }
+
+  const handlePhoneBookChange = (event) => {
+    console.log(event.target.value, 'test')
+    setNewName(event.target.value)
+  }
+
   return (
     <div>
       {course.map((course) => {
@@ -106,6 +123,21 @@ const App = ({ notes }) => {
         />
         <button type="submit">save</button>
       </form>
+      <div>
+        <h2>Phonebook</h2>
+        <form onSubmit={addPerson}>
+          <div>
+            name: <input value={newName} onChange={handlePhoneBookChange} type='text' />
+            <button type="submit">add</button>
+          </div>
+        </form>
+        <h2>Numbers</h2>
+        {persons.map((data) => {
+          return (
+            <p key={data.id}>{data.name}</p>
+          )
+        })}
+      </div>
     </div>
   )
 }
