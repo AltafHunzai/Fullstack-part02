@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
 import Note from './components/Note'
 import { Course } from './components/Course'
+import { SearchBar } from './components/SearchBar'
+import { FormNewContact } from './components/FormNewContact'
+import { ContactList } from './components/ContactList'
+import { SinglePersonDetail } from './components/SinglePersonDetails'
 
 const App = ({ notes }) => {
   const [note, setNote] = useState([])
@@ -10,7 +14,6 @@ const App = ({ notes }) => {
   const [newName, setNewName] = useState('add a new person')
   const [newNumber, setNewNumber] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
-
   const course = [
     {
       name: 'Half Stack application development',
@@ -139,32 +142,24 @@ const App = ({ notes }) => {
       </form>
       <div>
         <h2>Phonebook</h2>
-        <div style={{ margin: '15px auto' }}>
-          Filter shown with <input type="search" name="search" onChange={handleSearchChange} placeholder='search by Name' />
-        </div>
+        <SearchBar onChange={handleSearchChange} />
         {/* fitlered contacts */}
         <div>
-          {fitleredPersonCheck.map((data, index) => {
-            return(
-              <div key={index}>
-                {data.name} : {data.number}
-              </div>
-            )
-          })}
+          <SinglePersonDetail fitleredPersonCheck={fitleredPersonCheck} />
         </div>
         {/* fitlered contacts */}
 
         <h2>Add a new contact</h2>
-        <form onSubmit={addPerson}>
-          <div>
-            name: <input required onChange={handlePersonNameChange} type='text' />
-          </div>
-          <div>
-            number: <input required onChange={handlePersonNumberChange} type='text' />
-          </div>
-          <button type="submit">add</button>
-        </form>
+        {/* adding new contact form */}
+        <FormNewContact
+          onSubmit={addPerson}
+          onChange_NameInput={handlePersonNameChange}
+          onChange_NumberInput={handlePersonNumberChange}
+        />
+        {/* adding new contact form */}
+
         <h2>Numbers</h2>
+        <ContactList persons={persons} />
         {persons.map((data) => {
           return (
             <p key={data.id}>{data.name} : {data.number}</p>
