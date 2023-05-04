@@ -145,7 +145,7 @@ const App = ({ notes }) => {
         <SearchBar onChange={handleSearchChange} />
         {/* fitlered contacts */}
         <div>
-          <SinglePersonDetail fitleredPersonCheck={fitleredPersonCheck} />
+          <SinglePersonDetail Person={fitleredPersonCheck} />
         </div>
         {/* fitlered contacts */}
 

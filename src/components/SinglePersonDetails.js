@@ -1,7 +1,7 @@
-export const SinglePersonDetail = ({fitleredPersonCheck}) => {
+export const SinglePersonDetail = ({Person}) => {
     return (
         <>
-            {fitleredPersonCheck.map((data, index) => {
+            {Person.map((data, index) => {
                 return (
                     <div key={index}>
                         {data.name} : {data.number}
