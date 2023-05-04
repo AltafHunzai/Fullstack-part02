@@ -8,6 +8,8 @@ const App = ({ notes }) => {
   const [showAll, setShowAll] = useState(true)
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('add a new person')
+  const [newNumber, setNewNumber] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
 
   const course = [
     {
@@ -69,7 +71,6 @@ const App = ({ notes }) => {
     setNewNote('')
   }
   const handleNoteChange = (event) => {
-    console.log(event.target.value)
     setNewNote(event.target.value)
   }
 
@@ -77,16 +78,29 @@ const App = ({ notes }) => {
     event.preventDefault()
     const personObject = {
       name: newName,
+      number: newNumber,
       id: persons.length + 1,
     }
     setPersons(persons.concat(personObject))
     setNewName(event.target.value)
   }
 
-  const handlePhoneBookChange = (event) => {
-    console.log(event.target.value, 'test')
+  const handlePersonNameChange = (event) => {
+    if (persons.some(person => person.name === event.target.value)) {
+      alert(`${event.target.value} is already added to phonebook.`);
+    }
     setNewName(event.target.value)
   }
+
+  const handlePersonNumberChange = (event) => {
+    setNewNumber(event.target.value)
+  }
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value)
+  }
+
+  const fitleredPersonCheck = persons.filter(contact => contact.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
   return (
     <div>
@@ -125,16 +139,35 @@ const App = ({ notes }) => {
       </form>
       <div>
         <h2>Phonebook</h2>
+        <div style={{ margin: '15px auto' }}>
+          Filter shown with <input type="search" name="search" onChange={handleSearchChange} placeholder='search by Name' />
+        </div>
+        {/* fitlered contacts */}
+        <div>
+          {fitleredPersonCheck.map((data, index) => {
+            return(
+              <div key={index}>
+                {data.name} : {data.number}
+              </div>
+            )
+          })}
+        </div>
+        {/* fitlered contacts */}
+
+        <h2>Add a new contact</h2>
         <form onSubmit={addPerson}>
           <div>
-            name: <input value={newName} onChange={handlePhoneBookChange} type='text' />
-            <button type="submit">add</button>
+            name: <input required onChange={handlePersonNameChange} type='text' />
           </div>
+          <div>
+            number: <input required onChange={handlePersonNumberChange} type='text' />
+          </div>
+          <button type="submit">add</button>
         </form>
         <h2>Numbers</h2>
         {persons.map((data) => {
           return (
-            <p key={data.id}>{data.name}</p>
+            <p key={data.id}>{data.name} : {data.number}</p>
           )
         })}
       </div>
