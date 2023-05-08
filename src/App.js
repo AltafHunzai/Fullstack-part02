@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Note from './components/Note'
 import { Course } from './components/Course'
 import { SearchBar } from './components/SearchBar'
 import { FormNewContact } from './components/FormNewContact'
 import { ContactList } from './components/ContactList'
 import { SinglePersonDetail } from './components/SinglePersonDetails'
+import axios from 'axios'
 
 const App = ({ notes }) => {
   const [note, setNote] = useState([])
@@ -58,6 +59,17 @@ const App = ({ notes }) => {
       ]
     }
   ]
+
+  useEffect(() => {
+    console.log('effect');
+    axios.get('http://localhost:3010/notes')
+    .then(res => {
+      console.log('promise fulfilled');
+      setNote(res.data)
+    })
+  }, [])
+  console.log('render', notes.length, 'notes');
+
   const notesToShow = showAll
     ? note
     : note.filter(note => note.important === true)
@@ -160,11 +172,6 @@ const App = ({ notes }) => {
 
         <h2>Numbers</h2>
         <ContactList persons={persons} />
-        {persons.map((data) => {
-          return (
-            <p key={data.id}>{data.name} : {data.number}</p>
-          )
-        })}
       </div>
     </div>
   )
