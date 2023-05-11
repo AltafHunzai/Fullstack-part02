@@ -5,6 +5,7 @@ import { SearchBar } from './components/SearchBar'
 import { FormNewContact } from './components/FormNewContact'
 import { ContactList } from './components/ContactList'
 import { SinglePersonDetail } from './components/SinglePersonDetails'
+import notesService from './services/notes'
 import axios from 'axios'
 
 const App = ({ notes }) => {
@@ -60,15 +61,21 @@ const App = ({ notes }) => {
     }
   ]
 
+  const baseUrl = 'http://localhost:3010/persons'
+
   useEffect(() => {
-    console.log('effect');
-    axios.get('http://localhost:3010/notes')
-    .then(res => {
-      console.log('promise fulfilled');
-      setNote(res.data)
-    })
+    notesService.getAll()
+      .then(listOfNotes => {
+        setNote(listOfNotes)
+      })
   }, [])
-  console.log('render', notes.length, 'notes');
+
+  useEffect(() => {
+    axios.get(baseUrl)
+      .then(res => {
+        setPersons(res.data)
+      })
+  }, [])
 
   const notesToShow = showAll
     ? note
@@ -79,11 +86,14 @@ const App = ({ notes }) => {
     const noteObject = {
       content: newNote,
       important: Math.random() < 0.5,
-      id: notes.length + 1,
     }
 
-    setNote(note.concat(noteObject))
-    setNewNote('')
+    notesService
+      .create(noteObject)
+      .then(data => {
+        setNote(note.concat(data))
+        setNewNote('')
+      })
   }
   const handleNoteChange = (event) => {
     setNewNote(event.target.value)
@@ -96,8 +106,30 @@ const App = ({ notes }) => {
       number: newNumber,
       id: persons.length + 1,
     }
-    setPersons(persons.concat(personObject))
-    setNewName(event.target.value)
+
+    axios
+      .post(baseUrl, personObject)
+      .then(data => {
+        setPersons(persons.concat(data))
+        setNewName('')
+      })
+  }
+
+  const toggleImportanceOf = id => {
+    const nthNote = note.find(n => n.id === id)
+    const changedNote = { ...nthNote, important: !note.important }
+
+    notesService.update(id, changedNote)
+      .then(updateImportance => {
+        setNote(note.map(n => n.id !== id ? n : updateImportance))
+      })
+      .catch(error => {
+        alert(
+          `the note '${error.note.content}' was already deleted from server`
+        )
+        setNote(notes.filter(n => n.id !== id))
+      })
+    console.log(`importance of ' ${id} needs to be toggled`)
   }
 
   const handlePersonNameChange = (event) => {
@@ -115,7 +147,7 @@ const App = ({ notes }) => {
     setSearchTerm(event.target.value)
   }
 
-  const fitleredPersonCheck = persons.filter(contact => contact.name.toLowerCase().includes(searchTerm.toLowerCase()))
+  const fitleredPersonCheck = persons.filter(data => data.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
   return (
     <div>
@@ -142,7 +174,7 @@ const App = ({ notes }) => {
       </div>
       <ul>
         {notesToShow.map(notes =>
-          <Note key={notes.id} note={notes} />
+          <Note key={notes.id} note={notes.content} toggleImportance={() => toggleImportanceOf(notes.id)} />
         )}
       </ul>
       <form onSubmit={addNote}>
