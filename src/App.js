@@ -6,7 +6,7 @@ import { FormNewContact } from './components/FormNewContact'
 import { ContactList } from './components/ContactList'
 import { SinglePersonDetail } from './components/SinglePersonDetails'
 import notesService from './services/notes'
-import axios from 'axios'
+import contactService from './services/contact'
 
 const App = ({ notes }) => {
   const [note, setNote] = useState([])
@@ -71,9 +71,9 @@ const App = ({ notes }) => {
   }, [])
 
   useEffect(() => {
-    axios.get(baseUrl)
-      .then(res => {
-        setPersons(res.data)
+    contactService.getallPersons()
+      .then(data => {
+        setPersons(data)
       })
   }, [])
 
@@ -107,8 +107,8 @@ const App = ({ notes }) => {
       id: persons.length + 1,
     }
 
-    axios
-      .post(baseUrl, personObject)
+    contactService
+      .addPerson(personObject)
       .then(data => {
         setPersons(persons.concat(data))
         setNewName('')
