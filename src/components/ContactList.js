@@ -1,12 +1,10 @@
-export const ContactList = ({persons}) => {
+export const ContactList = ({ name, number, handleOnClick }) => {
     return (
         <>
             {
-                persons.map((data) => {
-                    return (
-                        <p key={data.id}>{data.name} : {data.number}</p>
-                    )
-                })
+                <div>{name} : {number}
+                    <button onClick={handleOnClick} >delete</button>
+                </div>
             }
         </>
     )

@@ -149,6 +149,23 @@ const App = ({ notes }) => {
 
   const fitleredPersonCheck = persons.filter(data => data.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
+  const deletePerson = (id) => {
+    const contactId = persons.find(data => data.id === id)
+    const selectedPerson = { ...contactId, name: !persons.name }
+    
+    const confirmMessage = window.confirm(`Are you sure you want to delete ${id}`)
+    if (confirmMessage) {
+      contactService
+        .deleteContact(id, selectedPerson)
+        .then(data => {
+          setPersons(persons.filter(person => person.id !== id))
+        })
+        .catch(err => [
+          window.alert(`${err} is not correct`)
+        ])
+    }
+  }
+
   return (
     <div>
       {course.map((course) => {
@@ -188,9 +205,11 @@ const App = ({ notes }) => {
         <h2>Phonebook</h2>
         <SearchBar onChange={handleSearchChange} />
         {/* fitlered contacts */}
-        <div>
-          <SinglePersonDetail Person={fitleredPersonCheck} />
-        </div>
+        {searchTerm.length === 0 ? '' :
+          <SinglePersonDetail
+            Person={fitleredPersonCheck}
+          />
+        }
         {/* fitlered contacts */}
 
         <h2>Add a new contact</h2>
@@ -203,7 +222,11 @@ const App = ({ notes }) => {
         {/* adding new contact form */}
 
         <h2>Numbers</h2>
-        <ContactList persons={persons} />
+        {
+          persons.map(data =>
+            <ContactList key={data.id} name={data.name} number={data.number} handleOnClick={() => deletePerson(data.id)} />
+          )
+        }
       </div>
     </div>
   )

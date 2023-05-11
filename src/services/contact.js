@@ -16,6 +16,11 @@ const updatePerson = (id, newObject) => {
     return request.then(res => res.data)
 }
 
-const contactService = { getallPersons, addPerson, updatePerson}
+const deleteContact = (id) => {
+    const request = axios.delete(`${baseUrl}/${id}`)
+    return request.then(res => res.data)
+}
+
+const contactService = { getallPersons, addPerson, updatePerson, deleteContact }
 
 export default contactService;
