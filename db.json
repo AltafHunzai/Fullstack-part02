@@ -26,61 +26,21 @@
       "important": true
     },
     {
-      "content": "a new note",
-      "important": true,
+      "content": "a new notezdv",
+      "important": false,
       "id": 6
-    },
-    {
-      "content": "check out this .com",
-      "important": true,
-      "id": 7
-    },
-    {
-      "content": "alternate  cable",
-      "important": true,
-      "id": 8
-    },
-    {
-      "content": "qwerty keyboard",
-      "important": true,
-      "id": 9
-    },
-    {
-      "content": "a new note",
-      "important": true,
-      "id": 10
-    },
-    {
-      "content": "fullstack application",
-      "important": true,
-      "id": 11
     }
   ],
   "persons": [
     {
-      "name": "Mary Poppendieck",
-      "number": "39-23-6423122",
-      "id": 4
-    },
-    {
-      "name": "Mike Tyson",
-      "number": "+923534654756",
-      "id": 5
-    },
-    {
-      "name": "Pervaiz",
-      "number": "+658734593875",
+      "name": "pervaiz",
+      "number": "22222222222",
       "id": 6
     },
     {
-      "name": "zulfiqar",
-      "number": "+8i4765834",
+      "name": "test",
+      "number": "112211221122",
       "id": 7
-    },
-    {
-      "name": "Trap city",
-      "number": "+934869586",
-      "id": 10
     }
   ]
 }

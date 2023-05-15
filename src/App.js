@@ -61,8 +61,6 @@ const App = ({ notes }) => {
     }
   ]
 
-  const baseUrl = 'http://localhost:3010/persons'
-
   useEffect(() => {
     notesService.getAll()
       .then(listOfNotes => {
@@ -99,22 +97,6 @@ const App = ({ notes }) => {
     setNewNote(event.target.value)
   }
 
-  const addPerson = (event) => {
-    event.preventDefault()
-    const personObject = {
-      name: newName,
-      number: newNumber,
-      id: persons.length + 1,
-    }
-
-    contactService
-      .addPerson(personObject)
-      .then(data => {
-        setPersons(persons.concat(data))
-        setNewName('')
-      })
-  }
-
   const toggleImportanceOf = id => {
     const nthNote = note.find(n => n.id === id)
     const changedNote = { ...nthNote, important: !note.important }
@@ -132,9 +114,48 @@ const App = ({ notes }) => {
     console.log(`importance of ' ${id} needs to be toggled`)
   }
 
+  const addPerson = (event) => {
+    event.preventDefault()
+    const personObject = {
+      name: newName,
+      number: newNumber,
+    }
+
+    const existingPerson = persons.find((person) => person.name === newName);
+
+    if (existingPerson) {
+      contactService
+        .updatePerson(existingPerson.id, personObject)
+        .then((updatedPerson) => {
+          setPersons(
+            persons.map((person) =>
+              person.id === updatedPerson.id ? updatedPerson : person
+            )
+          );
+          setNewName('');
+        })
+        .catch((error) => {
+          console.log('Error updating person:', error);
+        });
+    } else {
+      contactService
+        .addPerson(personObject)
+        .then((addedPerson) => {
+          setPersons(persons.concat(addedPerson));
+          setNewName('');
+        })
+        .catch((error) => {
+          console.log('Error adding person:', error);
+        });
+    }
+  }
+
   const handlePersonNameChange = (event) => {
-    if (persons.some(person => person.name === event.target.value)) {
-      alert(`${event.target.value} is already added to phonebook.`);
+    if (persons.some(person => person.name.toLowerCase() === event.target.value.toLowerCase())) {
+      const isConfirmUpdate = window.confirm(`${event.target.value} is already added to phonebook, replace the old number with a new one?`);
+      if (!isConfirmUpdate) {
+        event.target.value = ''
+      }
     }
     setNewName(event.target.value)
   }
@@ -149,11 +170,11 @@ const App = ({ notes }) => {
 
   const fitleredPersonCheck = persons.filter(data => data.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
-  const deletePerson = (id) => {
+  const deletePerson = async (id) => {
     const contactId = persons.find(data => data.id === id)
-    const selectedPerson = { ...contactId, name: !persons.name }
-    
-    const confirmMessage = window.confirm(`Are you sure you want to delete ${id}`)
+    const selectedPerson = await { ...contactId, name: !persons.name }
+
+    const confirmMessage = window.confirm(`Are you sure you want to delete ${contactId.name}`)
     if (confirmMessage) {
       contactService
         .deleteContact(id, selectedPerson)
@@ -161,7 +182,7 @@ const App = ({ notes }) => {
           setPersons(persons.filter(person => person.id !== id))
         })
         .catch(err => [
-          window.alert(`${err} is not correct`)
+          alert(`${err} is not correct`)
         ])
     }
   }
