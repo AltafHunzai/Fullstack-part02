@@ -147,10 +147,13 @@ const App = ({ notes }) => {
           setNewName('');
         })
         .catch((error) => {
-          console.log('Error updating person:', error);
+          setErrorMessage(`Information of ${existingPerson.name} has already been removed from server`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 4000)
         });
-      } else {
-        contactService
+    } else {
+      contactService
         .addPerson(personObject)
         .then((addedPerson) => {
           setPersons(persons.concat(addedPerson));
@@ -198,7 +201,10 @@ const App = ({ notes }) => {
           setPersons(persons.filter(person => person.id !== id))
         })
         .catch(err => [
-          alert(`${err} is not correct`)
+          setErrorMessage(`${contactId.name} is already deleted from the server`),
+          setTimeout(() =>{
+            setErrorMessage(null)
+          },4000 )
         ])
     }
   }
@@ -241,6 +247,7 @@ const App = ({ notes }) => {
       </form>
       <div>
         <h2>Phonebook</h2>
+        <Notification message={errorMessage} />
         <Success message={successMessage} />
         <SearchBar onChange={handleSearchChange} />
         {/* fitlered contacts */}
