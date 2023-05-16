@@ -7,6 +7,8 @@ import { ContactList } from './components/ContactList'
 import { SinglePersonDetail } from './components/SinglePersonDetails'
 import notesService from './services/notes'
 import contactService from './services/contact'
+import { Notification, Success } from './components/Notification'
+import { Footer } from './components/Footer'
 
 const App = ({ notes }) => {
   const [note, setNote] = useState([])
@@ -16,6 +18,8 @@ const App = ({ notes }) => {
   const [newName, setNewName] = useState('add a new person')
   const [newNumber, setNewNumber] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
   const course = [
     {
       name: 'Half Stack application development',
@@ -101,17 +105,21 @@ const App = ({ notes }) => {
     const nthNote = note.find(n => n.id === id)
     const changedNote = { ...nthNote, important: !note.important }
 
-    notesService.update(id, changedNote)
-      .then(updateImportance => {
-        setNote(note.map(n => n.id !== id ? n : updateImportance))
+    notesService
+      .update(id, changedNote)
+      .then(returnedNote => {
+        setNote(note.map(n => n.id !== id ? n : returnedNote))
+        console.log(`importance of ' ${id} needs to be toggled`)
       })
       .catch(error => {
-        alert(
-          `the note '${error.note.content}' was already deleted from server`
+        setErrorMessage(
+          `Note '${nthNote.content}' was already removed from server`
         )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
         setNote(notes.filter(n => n.id !== id))
       })
-    console.log(`importance of ' ${id} needs to be toggled`)
   }
 
   const addPerson = (event) => {
@@ -132,16 +140,24 @@ const App = ({ notes }) => {
               person.id === updatedPerson.id ? updatedPerson : person
             )
           );
+          setSuccessMessage(`Updated ${existingPerson.name} Successfully`)
+          setTimeout(() => {
+            setSuccessMessage(null)
+          }, 4000);
           setNewName('');
         })
         .catch((error) => {
           console.log('Error updating person:', error);
         });
-    } else {
-      contactService
+      } else {
+        contactService
         .addPerson(personObject)
         .then((addedPerson) => {
           setPersons(persons.concat(addedPerson));
+          setSuccessMessage(`added ${addedPerson.name} Successfully`)
+          setTimeout(() => {
+            setSuccessMessage(null)
+          }, 4000)
           setNewName('');
         })
         .catch((error) => {
@@ -205,6 +221,7 @@ const App = ({ notes }) => {
       })}
 
       <h1>Notes</h1>
+      <Notification message={errorMessage} />
       <div>
         <button onClick={() => setShowAll(!showAll)}>
           show {showAll ? 'important' : 'all'}
@@ -212,7 +229,7 @@ const App = ({ notes }) => {
       </div>
       <ul>
         {notesToShow.map(notes =>
-          <Note key={notes.id} note={notes.content} toggleImportance={() => toggleImportanceOf(notes.id)} />
+          <Note key={notes.id} note={notes.content} isImportant={notes.important} toggleImportance={() => toggleImportanceOf(notes.id)} />
         )}
       </ul>
       <form onSubmit={addNote}>
@@ -224,6 +241,7 @@ const App = ({ notes }) => {
       </form>
       <div>
         <h2>Phonebook</h2>
+        <Success message={successMessage} />
         <SearchBar onChange={handleSearchChange} />
         {/* fitlered contacts */}
         {searchTerm.length === 0 ? '' :
@@ -249,6 +267,7 @@ const App = ({ notes }) => {
           )
         }
       </div>
+      <Footer />
     </div>
   )
 }

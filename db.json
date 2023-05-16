@@ -27,8 +27,7 @@
     },
     {
       "content": "a new notezdv",
-      "important": false,
-      "id": 6
+      "important": true
     }
   ],
   "persons": [
@@ -41,6 +40,16 @@
       "name": "test",
       "number": "112211221122",
       "id": 7
+    },
+    {
+      "name": "harry",
+      "number": "55555555555",
+      "id": 8
+    },
+    {
+      "name": "Ali",
+      "number": "888888888",
+      "id": 9
     }
   ]
 }
