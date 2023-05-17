@@ -303,14 +303,7 @@ const App = ({ notes }) => {
       <div>
         <h1>Search Countries Detail</h1>
         <SearchCountry onChange={handleCountrySearch} />
-        <div>
-          <Country fetchedCountries={fetchedCountries} />
-          {/* {fetchedCountries.map((data, index) => {
-            return (
-              <p key={index}>{data.name.common}</p>
-            )
-          })} */}
-        </div>
+        <Country fetchedCountries={fetchedCountries} showSelectedCountry={setSearchedCountry} />
       </div>
       {/* search countries application UI */}
       <Footer />

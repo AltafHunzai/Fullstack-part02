@@ -1,4 +1,4 @@
-export const Country = ({ fetchedCountries }) => {
+export const Country = ({ fetchedCountries, showSelectedCountry }) => {
     if (fetchedCountries === undefined) {
 
     } else if (fetchedCountries.length >= 10) {
@@ -10,13 +10,15 @@ export const Country = ({ fetchedCountries }) => {
             <ul>
                 {fetchedCountries.map((data, index) => {
                     return (
-                        <li key={index}>{data.name.common}</li>
+                        <li key={index}>
+                            {data.name.common}
+                            <button onClick={() => showSelectedCountry(data.name.common)}>show</button>
+                        </li>
                     )
                 })}
             </ul>
         )
     } else if (fetchedCountries.length === 1) {
-        console.log(fetchedCountries);
         return (
             fetchedCountries.map((data, index) => {
                 return (
