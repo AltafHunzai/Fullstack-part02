@@ -9,6 +9,9 @@ import notesService from './services/notes'
 import contactService from './services/contact'
 import { Notification, Success } from './components/Notification'
 import { Footer } from './components/Footer'
+import countriesServices from './services/countries'
+import { SearchCountry } from './components/SearchCountry'
+import { Country } from './components/Country'
 
 const App = ({ notes }) => {
   const [note, setNote] = useState([])
@@ -20,6 +23,8 @@ const App = ({ notes }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
+  const [searchedCountry, setSearchedCountry] = useState('')
+  const [fetchedCountries, setFetchedCountries] = useState()
   const course = [
     {
       name: 'Half Stack application development',
@@ -202,12 +207,32 @@ const App = ({ notes }) => {
         })
         .catch(err => [
           setErrorMessage(`${contactId.name} is already deleted from the server`),
-          setTimeout(() =>{
+          setTimeout(() => {
             setErrorMessage(null)
-          },4000 )
+          }, 4000)
         ])
     }
   }
+
+  const handleCountrySearch = (event) => {
+    setSearchedCountry(event.target.value)
+
+  }
+
+  useEffect(() => {
+    if (searchedCountry === '') {
+
+    } else {
+      countriesServices
+        .getCountries(searchedCountry)
+        .then(data => {
+          setFetchedCountries(data)
+        })
+        .catch(err => {
+          console.log(err);
+        })
+    }
+  }, [searchedCountry])
 
   return (
     <div>
@@ -246,7 +271,7 @@ const App = ({ notes }) => {
         <button type="submit">save</button>
       </form>
       <div>
-        <h2>Phonebook</h2>
+        <h1>Phonebook</h1>
         <Notification message={errorMessage} />
         <Success message={successMessage} />
         <SearchBar onChange={handleSearchChange} />
@@ -258,7 +283,7 @@ const App = ({ notes }) => {
         }
         {/* fitlered contacts */}
 
-        <h2>Add a new contact</h2>
+        <h1>Add a new contact</h1>
         {/* adding new contact form */}
         <FormNewContact
           onSubmit={addPerson}
@@ -267,13 +292,27 @@ const App = ({ notes }) => {
         />
         {/* adding new contact form */}
 
-        <h2>Numbers</h2>
+        <h1>Numbers</h1>
         {
           persons.map(data =>
             <ContactList key={data.id} name={data.name} number={data.number} handleOnClick={() => deletePerson(data.id)} />
           )
         }
       </div>
+      {/* search countries application UI */}
+      <div>
+        <h1>Search Countries Detail</h1>
+        <SearchCountry onChange={handleCountrySearch} />
+        <div>
+          <Country fetchedCountries={fetchedCountries} />
+          {/* {fetchedCountries.map((data, index) => {
+            return (
+              <p key={index}>{data.name.common}</p>
+            )
+          })} */}
+        </div>
+      </div>
+      {/* search countries application UI */}
       <Footer />
     </div>
   )

@@ -16,6 +16,10 @@ h1 {
   font-style: italic;
 }
 
+ul {
+  list-style-type: none;
+}
+
 li {
   color: grey;
   padding-top: 3px;
