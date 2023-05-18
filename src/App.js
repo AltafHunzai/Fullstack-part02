@@ -12,6 +12,7 @@ import { Footer } from './components/Footer'
 import countriesServices from './services/countries'
 import { SearchCountry } from './components/SearchCountry'
 import { Country } from './components/Country'
+import weatherservice from "./services/weather"
 
 const App = ({ notes }) => {
   const [note, setNote] = useState([])
@@ -25,6 +26,8 @@ const App = ({ notes }) => {
   const [successMessage, setSuccessMessage] = useState('')
   const [searchedCountry, setSearchedCountry] = useState('')
   const [fetchedCountries, setFetchedCountries] = useState()
+  const [weather, setWeather] = useState()
+  const [weatherIcon, setWeatherIcon] = useState()
   const course = [
     {
       name: 'Half Stack application development',
@@ -234,6 +237,34 @@ const App = ({ notes }) => {
     }
   }, [searchedCountry])
 
+  useEffect(() => {
+    if (fetchedCountries === undefined) {
+
+    } else if (fetchedCountries.length === 1) {
+      const capital = fetchedCountries.map(data => data.capital)
+      weatherservice
+        .getWeather(capital)
+        .then(data =>
+          setWeather(data),
+          )
+          .catch(err => {
+          window.alert(err.message)
+        })
+      }
+    }, [fetchedCountries])
+    useEffect(() => {
+      if (weather) {
+       setWeatherIcon(weather.weather[0].icon)
+      // weather && weatherservice
+      //   .getWeatherIcon(icon)
+      //   .then(data =>
+      //     setWeatherIcon(data)
+      //   )
+      //   .catch(err => {
+      //      window.alert(err.message)
+      //   })
+    }
+  }, [weather])
   return (
     <div>
       {course.map((course) => {
@@ -303,7 +334,11 @@ const App = ({ notes }) => {
       <div>
         <h1>Search Countries Detail</h1>
         <SearchCountry onChange={handleCountrySearch} />
-        <Country fetchedCountries={fetchedCountries} showSelectedCountry={setSearchedCountry} />
+        <Country
+          weather={weather}
+          weatherIcon={weatherIcon}
+          fetchedCountries={fetchedCountries}
+          showSelectedCountry={setSearchedCountry} />
       </div>
       {/* search countries application UI */}
       <Footer />
